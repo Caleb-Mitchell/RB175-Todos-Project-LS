@@ -80,3 +80,14 @@ post "/lists/:id" do
     redirect "/lists/#{@id}"
   end
 end
+
+# Delete a todo list
+post "/lists/:id/delete" do
+  @id = params[:id].to_i
+  @list = session[:lists][@id]
+  list_name = @list[:name]
+
+  session[:success] = "List \"#{list_name}\" has been deleted."
+  session[:lists].delete_if { |list| list[:name] == list_name }
+  redirect "/lists"
+end
