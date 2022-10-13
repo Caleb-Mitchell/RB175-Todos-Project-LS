@@ -3,26 +3,34 @@
     <h2><%= @list[:name] %></h2>
     <ul>
       <li>
-        <a class="edit" href="/lists/<%= @id %>/edit">Edit List</a>
+        <a class="edit" href="/lists/<%= @list_id %>/edit">Edit List</a>
       </li>
     </ul>
   </header>
+
+  <ul>
+    <% @list[:todos].each_with_index do |todo, idx| %>
+      <li>
+        <h3><%= todo[:name] %></h3>
+      </li>
+    <% end %>
+  </ul>
 </section>
 
 <% content_for :header_links do %>
   <a href="/lists">All Lists</a>
 <% end %>
 
-<!-- <form action='/single_list' method='post'> -->
-<!--   <dl> -->
-<!--     <dt> -->
-<!--       <label for='new_todo'>Enter a new todo item:</label> -->
-<!--     </dt> -->
-<!--     <dd> -->
-<!--       <input type='text' name='new_todo' placeholder='Todo text' value=''> -->
-<!--     </dd> -->
-<!--   </dl> -->
-<!--   <fieldset class='actions'> -->
-<!--     <input type='submit' value='Add'> -->
-<!--   </fieldset> -->
-<!-- </form> -->
+<form action="/lists/<%= @list_id %>/todos" method="post">
+  <dl>
+    <dt>
+      <label for="todo">Enter a new todo item:</label>
+    </dt>
+    <dd>
+      <input name="todo" id="todo" placeholder="Something to do" type="text" value="<%= params[:todo] %>">
+    </dd>
+  </dl>
+  <fieldset class="actions">
+    <input type="submit" value="Add">
+  </fieldset>
+</form>
