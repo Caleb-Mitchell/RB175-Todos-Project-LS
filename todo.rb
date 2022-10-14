@@ -116,3 +116,36 @@ post "/lists/:list_id/todos" do
     redirect "/lists/#{@list_id}"
   end
 end
+
+# Delete a todo from a list
+post "/lists/:list_id/todos/:todo_id/delete" do
+  @list_id = params[:list_id].to_i
+  @todo_id = params[:todo_id].to_i
+  @list = session[:lists][@list_id]
+
+  todo_name = @list[:todos][@todo_id][:name]
+  session[:success] = "Todo \"#{todo_name}\" has been deleted."
+
+  @list[:todos].delete_if { |todo| todo[:name] == todo_name }
+  redirect "/lists/#{@list_id}"
+end
+
+# Mark a todo as complete
+post "/lists/:list_id/todos/:todo_id/complete" do
+  @list_id = params[:list_id].to_i
+  @todo_id = params[:todo_id].to_i
+  @list = session[:lists][@list_id]
+
+  todo_name = @list[:todos][@todo_id][:name]
+  @list[:todos].map do |todo|
+    if todo[:name] == todo_name && todo[:completed] == false
+      session[:success] = "Todo \"#{todo_name}\" has been marked complete."
+      todo[:completed] = true
+    elsif todo[:name] == todo_name && todo[:completed] == true
+      session[:success] = "Todo \"#{todo_name}\" has been marked incomplete."
+      todo[:completed] = false
+    end
+  end
+
+  redirect "/lists/#{@list_id}"
+end
