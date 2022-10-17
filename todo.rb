@@ -131,21 +131,28 @@ post "/lists/:list_id/todos/:todo_id/delete" do
 end
 
 # Mark a todo as complete
-post "/lists/:list_id/todos/:todo_id/complete" do
+post "/lists/:list_id/todos/:id" do
   @list_id = params[:list_id].to_i
-  @todo_id = params[:todo_id].to_i
+  @todo_id = params[:id].to_i
   @list = session[:lists][@list_id]
 
   todo_name = @list[:todos][@todo_id][:name]
-  @list[:todos].map do |todo|
-    if todo[:name] == todo_name && todo[:completed] == false
-      session[:success] = "Todo \"#{todo_name}\" has been marked complete."
-      todo[:completed] = true
-    elsif todo[:name] == todo_name && todo[:completed] == true
-      session[:success] = "Todo \"#{todo_name}\" has been marked incomplete."
-      todo[:completed] = false
-    end
-  end
+  session[:success] = "Todo \"#{todo_name}\" has been updated."
+
+  is_completed = params[:completed] == "true"
+  @list[:todos][@todo_id][:completed] = is_completed
+
+  redirect "/lists/#{@list_id}"
+end
+
+# Mark all todos as complete for a list
+post "/lists/:id/complete_all" do
+  @list_id = params[:id].to_i
+  @list = session[:lists][@list_id]
+  list_name = @list[:name]
+
+  session[:success] = "All todos in list \"#{list_name}\" have been completed."
+  @list[:todos].each { |todo| todo[:completed] = true }
 
   redirect "/lists/#{@list_id}"
 end
