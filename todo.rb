@@ -169,13 +169,13 @@ end
 # Delete a todo from a list
 post "/lists/:list_id/todos/:todo_id/delete" do
   @list_id = params[:list_id].to_i
-  @todo_id = params[:todo_id].to_i
+  todo_id = params[:todo_id].to_i
   @list = load_list(@list_id)
 
-  todo_name = @list[:todos][@todo_id][:name]
+  todo_name = @list[:todos][todo_id][:name]
   session[:success] = "Todo \"#{todo_name}\" has been deleted."
 
-  @list[:todos].delete_if { |todo| todo[:name] == todo_name }
+  @list[:todos].delete_at todo_id
   redirect "/lists/#{@list_id}"
 end
 
