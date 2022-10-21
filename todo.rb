@@ -140,11 +140,11 @@ end
 
 # Delete a todo list
 post "/lists/:id/delete" do
-  @id = params[:id].to_i
-  @list = session[:lists][@id]
+  id = params[:id].to_i
+  @list = session[:lists][id]
   list_name = @list[:name]
 
-  session[:lists].delete_if { |list| list[:name] == list_name }
+  session[:lists].delete_at id
 
   if env["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest"
     "/lists"
@@ -172,13 +172,13 @@ post "/lists/:list_id/todos" do
 end
 
 # Delete a todo from a list
-post "/lists/:list_id/todos/:todo_id/delete" do
+post "/lists/:list_id/todos/:id/delete" do
   @list_id = params[:list_id].to_i
-  todo_id = params[:todo_id].to_i
+  id = params[:id].to_i
   @list = load_list(@list_id)
 
-  todo_name = @list[:todos][todo_id][:name]
-  @list[:todos].delete_at todo_id
+  todo_name = @list[:todos][id][:name]
+  @list[:todos].delete_at id
 
   if env["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest"
     status 204
