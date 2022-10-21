@@ -144,9 +144,14 @@ post "/lists/:id/delete" do
   @list = session[:lists][@id]
   list_name = @list[:name]
 
-  session[:success] = "List \"#{list_name}\" has been deleted."
   session[:lists].delete_if { |list| list[:name] == list_name }
-  redirect "/lists"
+
+  if env["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest"
+    "/lists"
+  else
+    session[:success] = "List \"#{list_name}\" has been deleted."
+    redirect "/lists"
+  end
 end
 
 # Add a new todo to a list
@@ -173,10 +178,14 @@ post "/lists/:list_id/todos/:todo_id/delete" do
   @list = load_list(@list_id)
 
   todo_name = @list[:todos][todo_id][:name]
-  session[:success] = "Todo \"#{todo_name}\" has been deleted."
-
   @list[:todos].delete_at todo_id
-  redirect "/lists/#{@list_id}"
+
+  if env["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest"
+    status 204
+  else
+    session[:success] = "Todo \"#{todo_name}\" has been deleted."
+    redirect "/lists/#{@list_id}"
+  end
 end
 
 # Mark a todo as complete
