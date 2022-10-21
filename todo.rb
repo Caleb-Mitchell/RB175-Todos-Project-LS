@@ -171,8 +171,8 @@ post "/lists/:list_id/todos" do
     erb :list, layout: :layout
   else
 
-    id = next_todo_id(@list[:todos])
-    @list[:todos] << { id: id, name: text, completed: false }
+    id_num = next_todo_id(@list[:todos])
+    @list[:todos] << { id: id_num, name: text, completed: false }
 
     session[:success] = "The todo was added."
     redirect "/lists/#{@list_id}"
@@ -206,7 +206,7 @@ post "/lists/:list_id/todos/:id" do
   session[:success] = "Todo \"#{todo_name}\" has been updated."
 
   is_completed = params[:completed] == "true"
-  todo = @list[:todos].find { |todo| todo[:id] == todo_id }
+  todo = @list[:todos].find { |list_todo| list_todo[:id] == todo_id }
   todo[:completed] = is_completed
 
   redirect "/lists/#{@list_id}"
