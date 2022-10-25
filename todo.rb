@@ -152,15 +152,14 @@ end
 # Delete a todo list
 post "/lists/:id/delete" do
   id = params[:id].to_i
-  @list = session[:lists][id]
-  list_name = @list[:name]
+  list_name = load_list(id)[:name]
 
   session[:lists].reject! { |list| list[:id] == id }
+  session[:success] = "List \"#{list_name}\" has been deleted."
 
   if env["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest"
     "/lists"
   else
-    session[:success] = "List \"#{list_name}\" has been deleted."
     redirect "/lists"
   end
 end
